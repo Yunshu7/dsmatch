@@ -1,0 +1,22 @@
+Package: dsmatch
+Type: Package
+Title: Use double score matching algorithm to estimate ATE and QTE
+Version: 1.0.0
+Depends: R (>= 3.1)
+Imports:
+  boot,
+  Matching
+Authors@R: c(
+    person("Yunshu", "Zhang", email = "yzhan234@ncsu.edu", role = "cre"),
+    person("Shu", "Yang", email = "syang24@ncsu.edu", role = "aut"))
+Author: Yunshu Zhang [aut, cre],
+  Shu Yang [aut],
+Maintainer: Yunshu Zhang <yzhan234@ncsu.edu>
+Description: Provide matching algorithm based on both propensity score and 
+    prognostic score to estimate average treatment effect and quantile 
+    treatment effect. Classical matching algortihms such as propensity score
+    matching and prognositc score matching are also contained for comparison.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
