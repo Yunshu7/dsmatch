@@ -33,33 +33,33 @@ estforboot_dsATT <- function(data, indices, model.ps, ps = NULL, lp.ps = NULL, m
   # if prognostic score model is given, then fit the model using bootstrap data
   # especailly when linear predictors are given, we should boostrap these predictors too
   # if model is not given, directly boostrap the given score
-  if (model.pg == "glm"){
-    lm1.out <- lm(Y[loc.1] ~ X[loc.1, ])
+  if (model.pg == "glm" && is.null(pg)){
+    # lm1.out <- lm(Y[loc.1] ~ X[loc.1, ])
+    # mu1 <- cbind(1, X)[,which(!is.na(lm1.out$coefficients))] %*% lm1.out$coefficients[which(!is.na(lm1.out$coefficients))]
     lm0.out <- lm(Y[loc.0] ~ X[loc.0, ])
-    mu1 <- cbind(1, X) %*% lm1.out$coefficients
-    mu0 <- cbind(1, X) %*% lm0.out$coefficients
-  }else if (model.pg == "glm_logit"){
-    glm.out1 <- glm(Y[loc.1] ~ X[loc.1, ], family = binomial(link = "logit"))
-    mu1 <- cbind(1, X) %*% glm.out1$coefficients
+    mu0 <- cbind(1, X)[,which(!is.na(lm0.out$coefficients))] %*% lm0.out$coefficients[which(!is.na(lm0.out$coefficients))]
+  }else if (model.pg == "glm_logit" && is.null(pg)){
+    # glm.out1 <- glm(Y[loc.1] ~ X[loc.1, ], family = binomial(link = "logit"))
+    # mu1 <- cbind(1, X)[,which(!is.na(glm.out1$coefficients))] %*% glm.out1$coefficients[which(!is.na(glm.out1$coefficients))]
     glm.out0 <- glm(Y[loc.0] ~ X[loc.0, ], family = binomial(link = "logit"))
-    mu0 <- cbind(1, X) %*% glm.out0$coefficients
-  }else if (model.pg == "glm_probit"){
-    glm.out1 <- glm(Y[loc.1] ~ X[loc.1, ], family = binomial(link = "probit"))
-    mu1 <- cbind(1, X) %*% glm.out1$coefficients
+    mu0 <- cbind(1, X)[,which(!is.na(glm.out0$coefficients))] %*% glm.out0$coefficients[which(!is.na(glm.out0$coefficients))]
+  }else if (model.pg == "glm_probit" && is.null(pg)){
+    # glm.out1 <- glm(Y[loc.1] ~ X[loc.1, ], family = binomial(link = "probit"))
+    # mu1 <- cbind(1, X)[,which(!is.na(glm.out1$coefficients))] %*% glm.out1$coefficients[which(!is.na(glm.out1$coefficients))]
     glm.out0 <- glm(Y[loc.0] ~ X[loc.0, ], family = binomial(link = "probit"))
-    mu0 <- cbind(1, X) %*% glm.out0$coefficients
+    mu0 <- cbind(1, X)[,which(!is.na(glm.out0$coefficients))] %*% glm.out0$coefficients[which(!is.na(glm.out0$coefficients))]
   }else if (model.pg == "linpred"){
     if (is.vector(lp.pg)){
       lp.pg <- lp.pg[indices]
-      lm1.out <- lm(Y[loc.1] ~ lp.pg[loc.1])
+      # lm1.out <- lm(Y[loc.1] ~ lp.pg[loc.1])
       lm0.out <- lm(Y[loc.0] ~ lp.pg[loc.0])
-      mu1 <- cbind(1, lp.pg) %*% lm1.out$coefficients
+      # mu1 <- cbind(1, lp.pg) %*% lm1.out$coefficients
       mu0 <- cbind(1, lp.pg) %*% lm0.out$coefficients
     }else{
       lp.pg <- lp.pg[indices, ]
-      lm1.out <- lm(Y[loc.1] ~ lp.pg[loc.1, ])
+      # lm1.out <- lm(Y[loc.1] ~ lp.pg[loc.1, ])
       lm0.out <- lm(Y[loc.0] ~ lp.pg[loc.0, ])
-      mu1 <- cbind(1, lp.pg) %*% lm1.out$coefficients
+      # mu1 <- cbind(1, lp.pg) %*% lm1.out$coefficients
       mu0 <- cbind(1, lp.pg) %*% lm0.out$coefficients
     }
   }else if(model.pg == "zir_logit"){
@@ -73,13 +73,13 @@ estforboot_dsATT <- function(data, indices, model.ps, ps = NULL, lp.ps = NULL, m
     # then run a glm model with a binomial family
     # use linear predictors as part of the prognostic score
     # calculate non-zero probability to estimate \mu
-    glm.y1b <- Y
-    glm.y1b[loc.1r] <- 1
-    glm.y1b <- glm.y1b[loc.1]
-    glm.x1b <- X[loc.1, ]
-    glm.out1 <- glm(glm.y1b ~ glm.x1b, family = binomial(link = "logit"))
-    p1 <- cbind(1, X) %*% glm.out1$coefficients
-    pb1 <- 1 / (1 + exp(-p1))
+    # glm.y1b <- Y
+    # glm.y1b[loc.1r] <- 1
+    # glm.y1b <- glm.y1b[loc.1]
+    # glm.x1b <- X[loc.1, ]
+    # glm.out1 <- glm(glm.y1b ~ glm.x1b, family = binomial(link = "logit"))
+    # p1 <- cbind(1, X) %*% glm.out1$coefficients
+    # pb1 <- 1 / (1 + exp(-p1))
 
     glm.y0b <- Y
     glm.y0b[loc.0r] <- 1
@@ -90,28 +90,28 @@ estforboot_dsATT <- function(data, indices, model.ps, ps = NULL, lp.ps = NULL, m
     pb0 <- 1 / (1 + exp(-p0))
 
     # run regression model for non-zero outcomes
-    lm1.out <- lm(Y[loc.1r] ~ X[loc.1r, ])
+    # lm1.out <- lm(Y[loc.1r] ~ X[loc.1r, ])
     lm0.out <- lm(Y[loc.0r] ~ X[loc.0r, ])
-    mu1 <- cbind(1, X) %*% lm1.out$coefficients
+    # mu1 <- cbind(1, X) %*% lm1.out$coefficients
     mu0 <- cbind(1, X) %*% lm0.out$coefficients
   }else if(model.pg == "zir_probit"){
     # location where outcome is not zero
     # each for whole set, treatment group and control group
     loc.r <- which(Y != 0)
-    loc.1r <- intersect(loc.r, loc.1)
+    # loc.1r <- intersect(loc.r, loc.1)
     loc.0r <- intersect(loc.r, loc.0)
 
     # change non-zero outcomes into 1
     # then run a glm model with a binomial family
     # use linear predictors as part of the prognostic score
     # calculate non-zero probability to estimate \mu
-    glm.y1b <- Y
-    glm.y1b[loc.1r] <- 1
-    glm.y1b <- glm.y1b[loc.1]
-    glm.x1b <- X[loc.1, ]
-    glm.out1 <- glm(glm.y1b ~ glm.x1b, family = binomial(link = "probit"))
-    p1 <- cbind(1, X) %*% glm.out1$coefficients
-    pb1 <- pnorm(p1)
+    # glm.y1b <- Y
+    # glm.y1b[loc.1r] <- 1
+    # glm.y1b <- glm.y1b[loc.1]
+    # glm.x1b <- X[loc.1, ]
+    # glm.out1 <- glm(glm.y1b ~ glm.x1b, family = binomial(link = "probit"))
+    # p1 <- cbind(1, X) %*% glm.out1$coefficients
+    # pb1 <- pnorm(p1)
 
     glm.y0b <- Y
     glm.y0b[loc.0r] <- 1
@@ -122,30 +122,35 @@ estforboot_dsATT <- function(data, indices, model.ps, ps = NULL, lp.ps = NULL, m
     pb0 <- pnorm(p0)
 
     # run regression model for non-zero outcomes
-    lm1.out <- lm(Y[loc.1r] ~ X[loc.1r, ])
+    # lm1.out <- lm(Y[loc.1r] ~ X[loc.1r, ])
     lm0.out <- lm(Y[loc.0r] ~ X[loc.0r, ])
-    mu1 <- cbind(1, X) %*% lm1.out$coefficients
+    # mu1 <- cbind(1, X) %*% lm1.out$coefficients
     mu0 <- cbind(1, X) %*% lm0.out$coefficients
   }else{
-    mu0 = pg[indices, 1]
-    mu1 = pg[indices, 2]
+    # mu0 = pg[indices, 1]
+    # mu1 = pg[indices, 2]
+    mu0 = pg[indices]
   }
 
   # apply method of seive to obtain estimates of \mu
   if (!grepl("zir", model.pg)) {
     lm.y <- Y
-    lm.x <- cbind(mu0, mu1, mu0 ^ 2, mu1 ^ 2, mu0 * mu1,
-      ps, ps ^ 2, ps * mu0, ps * mu1, ps * mu0 * mu1)
+    # lm.x <- cbind(mu0, mu1, mu0 ^ 2, mu1 ^ 2, mu0 * mu1,
+    #   ps, ps ^ 2, ps * mu0, ps * mu1, ps * mu0 * mu1)
+    lm.x <- cbind(mu0, mu0 ^ 2, ps, ps ^ 2, ps * mu0)
     lm.out1 <- lm(lm.y[which(A == 1)] ~ lm.x[which(A == 1), ])
     mu1.ds <- cbind(1, lm.x) %*% lm.out1$coefficients
     lm.out0 <- lm(lm.y[which(A == 0)] ~ lm.x[which(A == 0), ])
     mu0.ds <- cbind(1, lm.x) %*% lm.out0$coefficients
   }else{
     lm.y <- Y
-    lm.x <- cbind(mu0, mu1, mu0 ^ 2, mu1 ^ 2, mu0 * mu1,
-      p0, p1, p0 ^ 2, p1 ^ 2, p0 * p1,
-      ps, ps ^ 2, ps * mu0, ps * mu1,
-      p0 * mu0, p0 * mu1, p1 * mu0, p1 * mu1, p0 * ps, p1 * ps)
+    # lm.x <- cbind(mu0, mu1, mu0 ^ 2, mu1 ^ 2, mu0 * mu1,
+    #   p0, p1, p0 ^ 2, p1 ^ 2, p0 * p1,
+    #   ps, ps ^ 2, ps * mu0, ps * mu1,
+    #   p0 * mu0, p0 * mu1, p1 * mu0, p1 * mu1, p0 * ps, p1 * ps)
+    lm.x <- cbind(mu0, mu0 ^ 2, p0, p0 ^ 2,
+                  ps, ps ^ 2, ps * mu0,
+                  p0 * mu0, p0 * ps)
 
     lm.out1 <- lm(lm.y[loc.1r] ~ lm.x[loc.1r, ])
     mu1.seive <- cbind(1, lm.x) %*% lm.out1$coefficients

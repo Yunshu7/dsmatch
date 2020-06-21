@@ -21,8 +21,15 @@
 #' prognostic score.
 #'
 #' A special model for prognostic score is the zero inflated regression
-#'  model, which fits a logistic model for the probability to be zero,
-#'  and a regression model for the non-zero values.
+#' model, which fits a logistic model for the probability to be zero,
+#' and a regression model for the non-zero values.
+#'
+#' Some parameters in \code{Match} in \code{Matching} has already been
+#' set as parameters in the function, such as \code{caliper} and
+#' \code{replace}. Addtional parameters for \code{Match} function can
+#' also be assigned by \code{...} except that \code{tie} and
+#' \code{Weight} has already been specified in the function.
+#'
 #'
 #'
 #' @param Y Outcome as numeric vector.
@@ -58,6 +65,16 @@
 #' @param lp.pg Linear predictors for prognostic score as numeric vector or
 #' matrix. Don't need to be specified if \code{model.pg} is not
 #' \code{"linpred"}.
+#' @param caliper A scalar or vector denoting the caliper(s) which should
+#' be used when matching. A caliper is the distance which is acceptable
+#' for any match. Observations which are outside of the caliper are dropped.
+#' If a scalar caliper is provided, this caliper is used for all covariates
+#' in X. If a vector of calipers is provided, a caliper value should be
+#' provided for each covariate in X. See function \code{Match} in
+#' \code{Matching} for more details.
+#' @param replace A logical flag for whether matching should be done with
+#' replacement. Note that if FALSE, the order of matches generally matters.
+#' See function \code{Match} in \code{Matching} for more details.
 #' @param cov.balance A logical scalar for whether covariance balance
 #' results should be shown.
 #' @param varest A logical scalar for whether variance of estimator should
@@ -71,6 +88,7 @@
 #' @param ncpus A numeric scalar for number of cores used in
 #' variance estimation. Don't need to be specified if \code{varest} is
 #' \code{F}.
+#' @param ... Additional parameters for \code{Match} in \code{Matching}.
 #'
 #' @return Results are put in a list:
 #'   \item{est.ds}{Point estimate of ATT if matching is based on
@@ -138,7 +156,8 @@
 dsmatchATT = function(Y, X, A, method = "dsm",
   model.ps = "other", ps = NULL, lp.ps = NULL,
   model.pg = "other", pg = NULL, lp.pg = NULL,
-  cov.balance = F, varest = F, boots = 100, mc = F, ncpus = 4){
+  caliper = NULL, replace = T, cov.balance = F,
+  varest = F, boots = 100, mc = F, ncpus = 4, ...){
 
   # sort A for multiple treatments situation (although not implemented yet...)
   if (is.unsorted(A)) {
@@ -280,7 +299,8 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       thistrt <- 0
       A1 <- A != thistrt
       out1 <- Matching::Match(Y = Y, Tr = A1, X = doublescore,
-        distance.tolerance = 0, ties = FALSE, Weight = 2)
+        distance.tolerance = 0, ties = FALSE, Weight = 2,
+        caliper = caliper, replace = replace, ...)
       # bias correction for mu
       bias.mu0 <- sum(mu0.ds[out1$index.control] - mu0.ds[out1$index.treated]) / n1
       mdata1 <- out1$mdata
@@ -368,7 +388,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       }
 
       # if prognostic score model is zero inflated regression model
-      # i.e. prognostic score has four dimensions
+      # i.e. prognostic score has two dimensions
 
       # location where outcome is not zero
       # each for whole set, treatment group and control group
@@ -381,13 +401,13 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       # use linear predictors as part of the prognostic score
       # calculate non-zero probability to estimate \mu
       if(model.pg == "zir_logit"){
-        glm.y1b <- Y
-        glm.y1b[loc.1r] <- 1
-        glm.y1b <- glm.y1b[loc.1]
-        glm.x1b <- X[loc.1, ]
-        glm.out1 <- glm(glm.y1b ~ glm.x1b, family = binomial(link = "logit"))
-        p1 <- cbind(1, X)[,which(!is.na(glm.out1$coefficients))] %*% glm.out1$coefficients[which(!is.na(glm.out1$coefficients))]
-        pb1 <- 1 / (1 + exp(-p1))
+        # glm.y1b <- Y
+        # glm.y1b[loc.1r] <- 1
+        # glm.y1b <- glm.y1b[loc.1]
+        # glm.x1b <- X[loc.1, ]
+        # glm.out1 <- glm(glm.y1b ~ glm.x1b, family = binomial(link = "logit"))
+        # p1 <- cbind(1, X)[,which(!is.na(glm.out1$coefficients))] %*% glm.out1$coefficients[which(!is.na(glm.out1$coefficients))]
+        # pb1 <- 1 / (1 + exp(-p1))
 
         glm.y0b <- Y
         glm.y0b[loc.0r] <- 1
@@ -397,13 +417,13 @@ dsmatchATT = function(Y, X, A, method = "dsm",
         p0 <- cbind(1, X)[,which(!is.na(glm.out0$coefficients))] %*% glm.out0$coefficients[which(!is.na(glm.out0$coefficients))]
         pb0 <- 1 / (1 + exp(-p0))
       }else if(model.pg == "zir_probit"){
-        glm.y1b <- Y
-        glm.y1b[loc.1r] <- 1
-        glm.y1b <- glm.y1b[loc.1]
-        glm.x1b <- X[loc.1, ]
-        glm.out1 <- glm(glm.y1b ~ glm.x1b, family = binomial(link = "probit"))
-        p1 <- cbind(1, X)[,which(!is.na(glm.out1$coefficients))] %*% glm.out1$coefficients[which(!is.na(glm.out1$coefficients))]
-        pb1 <- pnorm(p1)
+        # glm.y1b <- Y
+        # glm.y1b[loc.1r] <- 1
+        # glm.y1b <- glm.y1b[loc.1]
+        # glm.x1b <- X[loc.1, ]
+        # glm.out1 <- glm(glm.y1b ~ glm.x1b, family = binomial(link = "probit"))
+        # p1 <- cbind(1, X)[,which(!is.na(glm.out1$coefficients))] %*% glm.out1$coefficients[which(!is.na(glm.out1$coefficients))]
+        # pb1 <- pnorm(p1)
 
         glm.y0b <- Y
         glm.y0b[loc.0r] <- 1
@@ -415,30 +435,39 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       }
 
       # run regression model for non-zero outcomes
-      lm1.out <- lm(Y[loc.1r] ~ X[loc.1r, ])
+      # lm1.out <- lm(Y[loc.1r] ~ X[loc.1r, ])
       lm0.out <- lm(Y[loc.0r] ~ X[loc.0r, ])
-      mu1 <- cbind(1, X)[,which(!is.na(lm1.out$coefficients))] %*% lm1.out$coefficients[which(!is.na(lm1.out$coefficients))]
+      # mu1 <- cbind(1, X)[,which(!is.na(lm1.out$coefficients))] %*% lm1.out$coefficients[which(!is.na(lm1.out$coefficients))]
       mu0 <- cbind(1, X)[,which(!is.na(lm0.out$coefficients))] %*% lm0.out$coefficients[which(!is.na(lm0.out$coefficients))]
 
       # combine propensity score and prognostic score together
       # to construct double score, then standardize them
-      doublescore <- cbind(p0, p1, mu0, mu1, ps)
+      # doublescore <- cbind(p0, p1, mu0, mu1, ps)
+      # dmean <- apply(doublescore, 2, mean)
+      # dse <- apply(doublescore, 2, sd)
+      # doublescore <- cbind((p0 - dmean[1]) / dse[1],
+      #   (p1 - dmean[2]) / dse[2],
+      #   (mu0 - dmean[3]) / dse[3],
+      #   (mu1 - dmean[4]) / dse[4],
+      #   (ps - dmean[5]) / dse[5])
+      doublescore <- cbind(p0, mu0, ps)
       dmean <- apply(doublescore, 2, mean)
       dse <- apply(doublescore, 2, sd)
       doublescore <- cbind((p0 - dmean[1]) / dse[1],
-        (p1 - dmean[2]) / dse[2],
-        (mu0 - dmean[3]) / dse[3],
-        (mu1 - dmean[4]) / dse[4],
-        (ps - dmean[5]) / dse[5])
+                           (mu0 - dmean[2]) / dse[2],
+                           (ps - dmean[3]) / dse[3])
 
       # apply method of seive to obtain estimates of \mu
       # note that \mu has two parts: nonzero probability and nonzero value
       # we take their multiplication so that the estimator is unbiased of \mu
       lm.y <- Y
-      lm.x <- cbind(mu0, mu1, mu0 ^ 2, mu1 ^ 2, mu0 * mu1,
-        p0, p1, p0 ^ 2, p1 ^ 2, p0 * p1,
-        ps, ps ^ 2, ps * mu0, ps * mu1,
-        p0 * mu0, p0 * mu1, p1 * mu0, p1 * mu1, p0 * ps, p1 * ps)
+      # lm.x <- cbind(mu0, mu1, mu0 ^ 2, mu1 ^ 2, mu0 * mu1,
+      #   p0, p1, p0 ^ 2, p1 ^ 2, p0 * p1,
+      #   ps, ps ^ 2, ps * mu0, ps * mu1,
+      #   p0 * mu0, p0 * mu1, p1 * mu0, p1 * mu1, p0 * ps, p1 * ps)
+      lm.x <- cbind(mu0, mu0 ^ 2, p0, p0 ^ 2,
+                    ps, ps ^ 2, ps * mu0,
+                    p0 * mu0, p0 * ps)
 
       lm.out1 <- lm(lm.y[loc.1r] ~ lm.x[loc.1r, ])
       mu1.seive <- cbind(1, lm.x)[,which(!is.na(lm.out1$coefficients))] %*% lm.out1$coefficients[which(!is.na(lm.out1$coefficients))]
@@ -475,7 +504,8 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       thistrt <- 0
       A1 <- A != thistrt
       out1 <- Matching::Match(Y = Y, Tr = A1, X = doublescore,
-        distance.tolerance = 0, ties = FALSE, Weight = 2)
+        distance.tolerance = 0, ties = FALSE, Weight = 2,
+        caliper = caliper, replace = replace, ...)
       # bias correction for mu
       bias.mu0 <- sum(mu0.ds[out1$index.control] - mu0.ds[out1$index.treated]) / n1
       mdata1 <- out1$mdata
@@ -568,7 +598,8 @@ dsmatchATT = function(Y, X, A, method = "dsm",
     thistrt <- 0
     A1 <- A != thistrt
     out1 <- Matching::Match(Y = Y, Tr = A1, X = ps,
-      distance.tolerance = 0, ties = FALSE, Weight = 2)
+      distance.tolerance = 0, ties = FALSE, Weight = 2,
+      caliper = caliper, replace = replace, ...)
     # # bias correction for mu
     # bias.mu0 <- sum(mu0.ds[out1$index.control] - mu0.ds[out1$index.treated]) / n1
     mdata1 <- out1$mdata
@@ -694,7 +725,8 @@ dsmatchATT = function(Y, X, A, method = "dsm",
     thistrt <- 0
     A1 <- A != thistrt
     out1 <- Matching::Match(Y = Y, Tr = A1, X = mu0,
-      distance.tolerance = 0, ties = FALSE, Weight = 2)
+      distance.tolerance = 0, ties = FALSE, Weight = 2,
+      caliper = caliper, replace = replace, ...)
     # # bias correction for mu
     # bias.mu0 <- sum(mu0.pg[out1$index.control] - mu0.pg[out1$index.treated]) / n1
     mdata1 <- out1$mdata
@@ -773,7 +805,8 @@ dsmatchATT = function(Y, X, A, method = "dsm",
     thistrt <- 0
     A1 <- A != thistrt
     out1 <- Matching::Match(Y = Y, Tr = A1, X = X,
-      distance.tolerance = 0, ties = FALSE, Weight = 2)
+      distance.tolerance = 0, ties = FALSE, Weight = 2,
+      caliper = caliper, replace = replace, ...)
     # bias correction for mu
     bias.mu0 <- sum(mu0.x[out1$index.control] - mu0.x[out1$index.treated]) / n1
     mdata1 <- out1$mdata
