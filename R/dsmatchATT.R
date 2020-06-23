@@ -105,6 +105,9 @@
 #'   Meaningless if \code{varest} if \code{F}.}
 #'   \item{bootq2}{0.975 quantile of estimator estimated by bootstrap.
 #'   Meaningless if \code{varest} if \code{F}.}
+#'   \item{cov.bal}{standard difference in mean for all covariates}
+#'   \item{matching.detail}{returned object from function \code{Match}
+#'   in package \code{Matching}}
 #'
 #' @examples
 #' # import lalonde data from package "lalonde"
@@ -675,7 +678,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       bootvar <- bootq1 <- bootq2 <- NA
     }
 
-    return(list(est.ps = est.ps, bootvar = bootvar, bootq1 = bootq1, bootq2 = bootq2))
+    return(list(est.ps = est.ps, bootvar = bootvar, bootq1 = bootq1, bootq2 = bootq2, cov.bal = sdm.cov, matching.detail = out1))
 
   }else if(method == "pg"){
     # if prognostic score model is given and score is missing, then fit the model
