@@ -1,7 +1,7 @@
 Package: dsmatch
 Type: Package
 Title: Use double score matching algorithm to estimate ATE and QTE
-Version: 1.1.0
+Version: 1.2.0
 Depends: R (>= 3.1)
 Imports:
   boot,

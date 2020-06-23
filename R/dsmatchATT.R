@@ -323,6 +323,9 @@ dsmatchATT = function(Y, X, A, method = "dsm",
         # remove the first row
         dup.ctl <- dup.ctl[-1,]
 
+        # record standard difference in mean for all covariates
+        sdm.cov = rep(0, ncol(X))
+
         for (c in 1:ncol(X)) {
           cat("\n***** (V", c, ") ", colnames(X)[c], " *****\n", sep = "")
           res = matrix(0, 3, 2)
@@ -335,7 +338,10 @@ dsmatchATT = function(Y, X, A, method = "dsm",
           res[2, 2] <- mean(dup.ctl[, c])
           res[3, 2] <- (res[1, 2] - res[2, 2]) / sd(X[, c])
           print(res)
+          sdm.cov[c] = res[3, 2]
         }
+      }else{
+        sdm.cov = NA
       }
 
       #variance estimation
@@ -357,10 +363,10 @@ dsmatchATT = function(Y, X, A, method = "dsm",
         bootq1 = quantile(results$t, probs = 0.025, type = 5, na.rm = TRUE)
         bootq2 = quantile(results$t, probs = 0.975, type = 5, na.rm = TRUE)
       }else {
-        bootvar <- bootq1 <- bootq2 <- rep(1, 2)
+        bootvar <- bootq1 <- bootq2 <- NA
       }
 
-      return(list(est.ds = est.ds, bootvar = bootvar, bootq1 = bootq1, bootq2 = bootq2))
+      return(list(est.ds = est.ds, bootvar = bootvar, bootq1 = bootq1, bootq2 = bootq2, cov.bal = sdm.cov, matching.detail = out1))
 
     }else{
       # if propensity score model is given and score is missing, then fit the model
@@ -528,6 +534,9 @@ dsmatchATT = function(Y, X, A, method = "dsm",
         # remove the first row
         dup.ctl <- dup.ctl[-1,]
 
+        # record standard difference in mean for all covariates
+        sdm.cov = rep(0, ncol(X))
+
         for (c in 1:ncol(X)) {
           cat("\n***** (V", c, ") ", colnames(X)[c], " *****\n", sep = "")
           res = matrix(0, 3, 2)
@@ -540,7 +549,10 @@ dsmatchATT = function(Y, X, A, method = "dsm",
           res[2, 2] <- mean(dup.ctl[, c])
           res[3, 2] <- (res[1, 2] - res[2, 2]) / sd(X[, c])
           print(res)
+          sdm.cov[c] = res[3, 2]
         }
+      }else{
+        sdm.cov = NA
       }
 
       #variance estimation
@@ -562,10 +574,10 @@ dsmatchATT = function(Y, X, A, method = "dsm",
         bootq1 = quantile(results$t, probs = 0.025, type = 5, na.rm = TRUE)
         bootq2 = quantile(results$t, probs = 0.975, type = 5, na.rm = TRUE)
       }else {
-        bootvar <- bootq1 <- bootq2 <- rep(1, 2)
+        bootvar <- bootq1 <- bootq2 <- NA
       }
 
-      return(list(est.ds = est.ds, bootvar = bootvar, bootq1 = bootq1, bootq2 = bootq2))
+      return(list(est.ds = est.ds, bootvar = bootvar, bootq1 = bootq1, bootq2 = bootq2, cov.bal = sdm.cov, matching.detail = out1))
     }
 
 
@@ -622,6 +634,9 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       # remove the first row
       dup.ctl <- dup.ctl[-1,]
 
+      # record standard difference in mean for all covariates
+      sdm.cov = rep(0, ncol(X))
+
       for (c in 1:ncol(X)) {
         cat("\n***** (V", c, ") ", colnames(X)[c], " *****\n", sep = "")
         res = matrix(0, 3, 2)
@@ -634,7 +649,10 @@ dsmatchATT = function(Y, X, A, method = "dsm",
         res[2, 2] <- mean(dup.ctl[, c])
         res[3, 2] <- (res[1, 2] - res[2, 2]) / sd(X[, c])
         print(res)
+        sdm.cov[c] = res[3, 2]
       }
+    }else{
+      sdm.cov = NA
     }
 
     #variance estimation
@@ -654,7 +672,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       bootq1 = quantile(results$t, probs = 0.025, type = 5, na.rm = TRUE)
       bootq2 = quantile(results$t, probs = 0.975, type = 5, na.rm = TRUE)
     }else {
-      bootvar <- bootq1 <- bootq2 <- rep(1, 2)
+      bootvar <- bootq1 <- bootq2 <- NA
     }
 
     return(list(est.ps = est.ps, bootvar = bootvar, bootq1 = bootq1, bootq2 = bootq2))
@@ -749,6 +767,9 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       # remove the first row
       dup.ctl <- dup.ctl[-1,]
 
+      # record standard difference in mean for all covariates
+      sdm.cov = rep(0, ncol(X))
+
       for (c in 1:ncol(X)) {
         cat("\n***** (V", c, ") ", colnames(X)[c], " *****\n", sep = "")
         res = matrix(0, 3, 2)
@@ -761,7 +782,10 @@ dsmatchATT = function(Y, X, A, method = "dsm",
         res[2, 2] <- mean(dup.ctl[, c])
         res[3, 2] <- (res[1, 2] - res[2, 2]) / sd(X[, c])
         print(res)
+        sdm.cov[c] = res[3, 2]
       }
+    }else{
+      sdm.cov = NA
     }
 
     #variance estimation
@@ -781,10 +805,10 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       bootq1 = quantile(results$t, probs = 0.025, type = 5, na.rm = TRUE)
       bootq2 = quantile(results$t, probs = 0.975, type = 5, na.rm = TRUE)
     }else {
-      bootvar <- bootq1 <- bootq2 <- rep(1, 2)
+      bootvar <- bootq1 <- bootq2 <- NA
     }
 
-    return(list(est.pg = est.pg, bootvar = bootvar, bootq1 = bootq1, bootq2 = bootq2))
+    return(list(est.pg = est.pg, bootvar = bootvar, bootq1 = bootq1, bootq2 = bootq2, cov.bal = sdm.cov, matching.detail = out1))
 
   }else if(method == "cov"){
     lm.y <- Y
@@ -829,6 +853,9 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       # remove the first row
       dup.ctl <- dup.ctl[-1,]
 
+      # record standard difference in mean for all covariates
+      sdm.cov = rep(0, ncol(X))
+
       for (c in 1:ncol(X)) {
         cat("\n***** (V", c, ") ", colnames(X)[c], " *****\n", sep = "")
         res = matrix(0, 3, 2)
@@ -841,9 +868,11 @@ dsmatchATT = function(Y, X, A, method = "dsm",
         res[2, 2] <- mean(dup.ctl[, c])
         res[3, 2] <- (res[1, 2] - res[2, 2]) / sd(X[, c])
         print(res)
+        sdm.cov[c] = res[3, 2]
       }
+    }else{
+      sdm.cov = NA
     }
-
     #variance estimation
     data <- cbind(Y, A, Kiw.x, X)
     if (varest == 1) {
@@ -859,10 +888,10 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       bootq1 = quantile(results$t, probs = 0.025, type = 5, na.rm = TRUE)
       bootq2 = quantile(results$t, probs = 0.975, type = 5, na.rm = TRUE)
     }else {
-      bootvar <- bootq1 <- bootq2 <- rep(1, 2)
+      bootvar <- bootq1 <- bootq2 <- NA
     }
 
-    return(list(est.x = est.x, bootvar = bootvar, bootq1 = bootq1, bootq2 = bootq2))
+    return(list(est.x = est.x, bootvar = bootvar, bootq1 = bootq1, bootq2 = bootq2, cov.bal = sdm.cov, matching.detail = out1))
 
   }else{
     stop("invalid method")
