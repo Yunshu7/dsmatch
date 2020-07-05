@@ -304,7 +304,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       A1 <- A != thistrt
       out1 <- Matching::Match(Y = Y, Tr = A1, X = doublescore,
         distance.tolerance = 0, ties = FALSE, Weight = 2,
-        caliper = caliper, replace = replace, ...)
+        caliper = NULL, replace = replace, ...)
 
       if(is.null(caliper)){
         matching.rate = 1 - out1$ndrops / n1
