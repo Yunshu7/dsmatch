@@ -103,7 +103,7 @@
 #' Z[,"re74"] = log(Z[,"re74"] + 1)
 #' Z[,"re75"] = log(Z[,"re75"] + 1)
 #' Z[,"age"] = (Z[,"age"] - mean(Z[,"age"])) / sd(Z[,"age"])
-#' Z[,"education"] = (Z[,"education"] - mean(Z[,"education"])) / sd(Z[,"education"])
+#' Z[,"educ"] = (Z[,"educ"] - mean(Z[,"educ"])) / sd(Z[,"educ"])
 #' Z[,"re74"] = (Z[,"re74"] - mean(Z[,"re74"])) / sd(Z[,"re74"])
 #' Z[,"re75"] = (Z[,"re75"] - mean(Z[,"re75"])) / sd(Z[,"re75"])
 #' Z = cbind(Z, Z[,"age"]^2, Z[,"educ"]^2, Z[,"re74"]^2, Z[,"re75"]^2)
