@@ -25,12 +25,16 @@ dsmatchATT_caliper = function(Y, A, X, caliper, replace){
 
       if(length(candidate_i) > 0){
         # calculate Mahalanobis distance
-        distance_i = t(t(X[candidate_i, ]) - X[i, ]) %*% Sinv %*% (t(X[candidate_i, ]) - X[i, ])
-        distance_i = diag(distance_i)
+        if(length(candidate_i) > 1){
+          distance_i = t(t(X[candidate_i, ]) - X[i, ]) %*% Sinv %*% (t(X[candidate_i, ]) - X[i, ])
+          distance_i = diag(distance_i)
 
-        # choose the closest control subject to match
+          # choose the closest control subject to match
+          match.control.index = candidate_i[which.min(distance_i)]
+        }else{
+          distance_i = (X[candidate_i, ] - X[i, ]) %*% Sinv %*% (X[candidate_i, ] - X[i, ])
+        }
         # add matched pair into the list
-        match.control.index = candidate_i[which.min(distance_i)]
         index.control = c(index.control, match.control.index)
         index.treated = c(index.treated, i)
 
