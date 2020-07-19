@@ -177,7 +177,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       ps <- ps[temp$ix]
     }
     if(!is.null(pg)){
-      pg <- pg[temp$ix, ]
+      pg <- pg[temp$ix]
     }
     if(!is.null(lp.ps)){
       if(is.vector(lp.ps)){
