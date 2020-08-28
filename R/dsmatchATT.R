@@ -698,7 +698,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
     # bias.mu0 <- sum(mu0.ds[out1$index.control] - mu0.ds[out1$index.treated]) / n1
     mdata1 <- out1$mdata
     Kiw.ps[loc.0] <- table(factor(out1$index.control, levels = loc.0))
-    est.ps <- mean(Y[loc.1]) - mean(mdata1$Y[which(mdata1$Tr == 0)])
+    est.ps <- mean(mdata1$Y[which(mdata1$Tr == 1)]) - mean(mdata1$Y[which(mdata1$Tr == 0)])
     matching.rate = 1 - out1$ndrops / n1
 
     # covariate balance checking
@@ -831,7 +831,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
     # bias.mu0 <- sum(mu0.pg[out1$index.control] - mu0.pg[out1$index.treated]) / n1
     mdata1 <- out1$mdata
     Kiw.pg[loc.0] <- table(factor(out1$index.control, levels = loc.0))
-    est.pg <- mean(Y[loc.1]) - mean(mdata1$Y[which(mdata1$Tr == 0)])
+    est.pg <- mean(mdata1$Y[which(mdata1$Tr == 1)]) - mean(mdata1$Y[which(mdata1$Tr == 0)])
     matching.rate = 1 - out1$ndrops / n1
 
     # covariate balance checking
