@@ -4,9 +4,26 @@
 \alias{dsmatchATT}
 \title{Double Score Matching Estimator for Average Treatment Effect for the Treated.}
 \usage{
-dsmatchATT(Y, X, A, method = "dsm", model.ps = "other", ps = NULL,
-  lp.ps = NULL, model.pg = "other", pg = NULL, lp.pg = NULL,
-  cov.balance = F, varest = F, boots = 100, mc = F, ncpus = 4)
+dsmatchATT(
+  Y,
+  X,
+  A,
+  method = "dsm",
+  model.ps = "other",
+  ps = NULL,
+  lp.ps = NULL,
+  model.pg = "other",
+  pg = NULL,
+  lp.pg = NULL,
+  caliper = NULL,
+  replace = T,
+  cov.balance = F,
+  varest = F,
+  boots = 100,
+  mc = F,
+  ncpus = 4,
+  ...
+)
 }
 \arguments{
 \item{Y}{Outcome as numeric vector.}
@@ -52,6 +69,18 @@ potential outcome for treatment group. Don't need to be specified if
 matrix. Don't need to be specified if \code{model.pg} is not
 \code{"linpred"}.}
 
+\item{caliper}{A scalar or vector denoting the caliper(s) which should
+be used when matching. A caliper is the distance which is acceptable
+for any match. Observations which are outside of the caliper are dropped.
+If a scalar caliper is provided, this caliper is used for all covariates
+in X. If a vector of calipers is provided, a caliper value should be
+provided for each covariate in X. See function \code{Match} in
+\code{Matching} for more details.}
+
+\item{replace}{A logical flag for whether matching should be done with
+replacement. Note that if FALSE, the order of matches generally matters.
+See function \code{Match} in \code{Matching} for more details.}
+
 \item{cov.balance}{A logical scalar for whether covariance balance
 results should be shown.}
 
@@ -69,23 +98,29 @@ variance estimation. Don't need to be specified if \code{varest} is
 \item{ncpus}{A numeric scalar for number of cores used in
 variance estimation. Don't need to be specified if \code{varest} is
 \code{F}.}
+
+\item{...}{Additional parameters for \code{Match} in \code{Matching}.}
 }
 \value{
 Results are put in a list:
   \item{est.ds}{Point estimate of ATT if matching is based on
-  double score}
+  double score.}
   \item{est.ps}{Point estimate of ATT if matching is based on
-  propensity score}
+  propensity score.}
   \item{est.pg}{Point estimate of ATT if matching is based on
-  prognostic score}
+  prognostic score.}
   \item{est.x}{Point estimate of ATT if matching is based on
-  covarites directly}
+  covarites directly.}
   \item{boot.var}{Variance of estimator estimated by bootstrap.
   Meaningless if \code{varest} if \code{F}.}
   \item{bootq1}{0.025 quantile of estimator estimated by bootstrap.
   Meaningless if \code{varest} if \code{F}.}
   \item{bootq2}{0.975 quantile of estimator estimated by bootstrap.
   Meaningless if \code{varest} if \code{F}.}
+  \item{cov.bal}{standard difference in mean for all covariates.}
+  \item{matching.detail}{returned object from function \code{Match}
+  in package \code{Matching}, not included for dsmatch with caliper.}
+  \item{matching.rate}{matching rate due to caliper or replacement.}
 }
 \description{
 \code{dsmatchATT} applys matching algorithm to estimate average
@@ -110,8 +145,14 @@ will be thrown if this situation happens. Similar results for
 prognostic score.
 
 A special model for prognostic score is the zero inflated regression
- model, which fits a logistic model for the probability to be zero,
- and a regression model for the non-zero values.
+model, which fits a logistic model for the probability to be zero,
+and a regression model for the non-zero values.
+
+Some parameters in \code{Match} in \code{Matching} has already been
+set as parameters in the function, such as \code{caliper} and
+\code{replace}. Addtional parameters for \code{Match} function can
+also be assigned by \code{...} except that \code{tie} and
+\code{Weight} has already been specified in the function.
 }
 \examples{
 # import lalonde data from package "lalonde"

@@ -92,23 +92,23 @@
 #'
 #' @return Results are put in a list:
 #'   \item{est.ds}{Point estimate of ATT if matching is based on
-#'   double score}
+#'   double score.}
 #'   \item{est.ps}{Point estimate of ATT if matching is based on
-#'   propensity score}
+#'   propensity score.}
 #'   \item{est.pg}{Point estimate of ATT if matching is based on
-#'   prognostic score}
+#'   prognostic score.}
 #'   \item{est.x}{Point estimate of ATT if matching is based on
-#'   covarites directly}
+#'   covarites directly.}
 #'   \item{boot.var}{Variance of estimator estimated by bootstrap.
 #'   Meaningless if \code{varest} if \code{F}.}
 #'   \item{bootq1}{0.025 quantile of estimator estimated by bootstrap.
 #'   Meaningless if \code{varest} if \code{F}.}
 #'   \item{bootq2}{0.975 quantile of estimator estimated by bootstrap.
 #'   Meaningless if \code{varest} if \code{F}.}
-#'   \item{cov.bal}{standard difference in mean for all covariates}
+#'   \item{cov.bal}{standard difference in mean for all covariates.}
 #'   \item{matching.detail}{returned object from function \code{Match}
-#'   in package \code{Matching}}
-#'   \item{matching.rate}{matching rate due to caliper or replacement}
+#'   in package \code{Matching}, not included for dsmatch with caliper.}
+#'   \item{matching.rate}{matching rate due to caliper or replacement.}
 #'
 #' @examples
 #' # import lalonde data from package "lalonde"

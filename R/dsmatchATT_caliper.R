@@ -32,7 +32,7 @@ dsmatchATT_caliper = function(Y, A, X, caliper, replace){
           # choose the closest control subject to match
           match.control.index = candidate_i[which.min(distance_i)]
         }else{
-          distance_i = (X[candidate_i, ] - X[i, ]) %*% Sinv %*% (X[candidate_i, ] - X[i, ])
+          match.control.index = candidate_i
         }
         # add matched pair into the list
         index.control = c(index.control, match.control.index)

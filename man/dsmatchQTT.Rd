@@ -4,9 +4,24 @@
 \alias{dsmatchQTT}
 \title{Double Score Matching Estimator for Quantile Treatment Effect for the Treated.}
 \usage{
-dsmatchQTT(Y, X, A, p, method = "dsm", model.ps = "other", ps = NULL,
-  lp.ps = NULL, model.pg = "other", pg = NULL, lp.pg = NULL,
-  cov.balance = F, varest = F, boots = 100, mc = F, ncpus = 4)
+dsmatchQTT(
+  Y,
+  X,
+  A,
+  p,
+  method = "dsm",
+  model.ps = "other",
+  ps = NULL,
+  lp.ps = NULL,
+  model.pg = "other",
+  pg = NULL,
+  lp.pg = NULL,
+  cov.balance = F,
+  varest = F,
+  boots = 100,
+  mc = F,
+  ncpus = 4
+)
 }
 \arguments{
 \item{Y}{Outcome as numeric vector.}

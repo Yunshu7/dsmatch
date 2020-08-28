@@ -4,9 +4,24 @@
 \alias{dsmatchQTE}
 \title{Double Score Matching Estimator for Quantile Treatment Effect.}
 \usage{
-dsmatchQTE(Y, X, A, p, method = "dsm", model.ps = "other", ps = NULL,
-  lp.ps = NULL, model.pg = "other", pg = NULL, lp.pg = NULL,
-  cov.balance = F, varest = F, boots = 100, mc = F, ncpus = 4)
+dsmatchQTE(
+  Y,
+  X,
+  A,
+  p,
+  method = "dsm",
+  model.ps = "other",
+  ps = NULL,
+  lp.ps = NULL,
+  model.pg = "other",
+  pg = NULL,
+  lp.pg = NULL,
+  cov.balance = F,
+  varest = F,
+  boots = 100,
+  mc = F,
+  ncpus = 4
+)
 }
 \arguments{
 \item{Y}{Outcome as numeric vector.}
@@ -130,7 +145,7 @@ Z = X
 Z[,"re74"] = log(Z[,"re74"] + 1)
 Z[,"re75"] = log(Z[,"re75"] + 1)
 Z[,"age"] = (Z[,"age"] - mean(Z[,"age"])) / sd(Z[,"age"])
-Z[,"education"] = (Z[,"education"] - mean(Z[,"education"])) / sd(Z[,"education"])
+Z[,"educ"] = (Z[,"educ"] - mean(Z[,"educ"])) / sd(Z[,"educ"])
 Z[,"re74"] = (Z[,"re74"] - mean(Z[,"re74"])) / sd(Z[,"re74"])
 Z[,"re75"] = (Z[,"re75"] - mean(Z[,"re75"])) / sd(Z[,"re75"])
 Z = cbind(Z, Z[,"age"]^2, Z[,"educ"]^2, Z[,"re74"]^2, Z[,"re75"]^2)
