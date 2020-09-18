@@ -167,6 +167,14 @@ dsmatchATT = function(Y, X, A, method = "dsm",
     X = as.matrix(X)
   }
 
+  if((!is.null(ps)) & (!is.vector(ps))){
+    ps = as.vector(ps)
+  }
+
+  if((!is.null(pg)) & (!is.vector(pg))){
+    pg = as.vector(pg)
+  }
+
   # sort A for multiple treatments situation (although not implemented yet...)
   if (is.unsorted(A)) {
     temp <- sort(A, index.return = TRUE)
@@ -224,7 +232,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
         }
       }else if (!(model.ps == "other") && !(is.null(ps))){
         warning("propensity score is given while a fitting model is chosen")
-      }else if (is.ps(ps, n) == F){
+      }else if (length(ps) != n){
         stop("propensity score should be given or the score is invalid")
       }
 
@@ -266,7 +274,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
         }
       }else if (!(model.pg == "other") && !(is.null(pg))){
         warning("prognostic score is given while a fitting model is chosen")
-      }else if (is.pg(pg, n) == F){
+      }else if (length(pg) != n){
         stop("prognostic score should be given or the score is invalid")
       }else{
         # mu0 = pg[,1]
@@ -472,7 +480,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
         }
       }else if (!(model.ps == "other") && !(is.null(ps))){
         warning("propensity score is given while a fitting model is chosen")
-      }else if (is.ps(ps, n) == F){
+      }else if (length(ps) != n){
         stop("propensity score should be given or the score is invalid")
       }
 
@@ -684,7 +692,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       }
     }else if (!(model.ps == "other") && !(is.null(ps))){
       warning("propensity score is given while a fitting model is chosen")
-    }else if (is.ps(ps, n) == F){
+    }else if (length(ps) != n){
       stop("propensity score should be given or the score is invalid")
     }
 
@@ -798,7 +806,7 @@ dsmatchATT = function(Y, X, A, method = "dsm",
       }
     }else if (!(model.pg == "other") && !(is.null(pg))){
       warning("prognostic score is given while a fitting model is chosen")
-    }else if (is.pg(pg, n) == F){
+    }else if (length(pg) != n){
       stop("prognostic score should be given or the score is invalid")
     }else{
       # mu0 = pg[,1]
